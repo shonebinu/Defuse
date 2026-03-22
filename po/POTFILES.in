@@ -1,0 +1,8 @@
+# List of source files containing translatable strings.
+# Please keep this file sorted alphabetically.
+data/io.github.shonebinu.Defuse.desktop.in
+data/io.github.shonebinu.Defuse.metainfo.xml.in
+data/io.github.shonebinu.Defuse.gschema.xml
+src/main.py
+src/window.py
+src/window.ui

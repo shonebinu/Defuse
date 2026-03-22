@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=defuse
+Exec=defuse
+Icon=io.github.shonebinu.Defuse
+Terminal=false
+Type=Application
+Categories=Utility;
+Keywords=GTK;
+StartupNotify=true
+DBusActivatable=true
