@@ -17,12 +17,17 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from gi.repository import Adw
-from gi.repository import Gtk
+import os
 
-@Gtk.Template(resource_path='/io/github/shonebinu/Defuse/window.ui')
+from gi.repository import Adw, Gtk
+
+# set path where the models are stored
+os.environ["U2NET_HOME"] = "/app/share/io.github.shonebinu.Defuse/rembg_models"
+
+
+@Gtk.Template(resource_path="/io/github/shonebinu/Defuse/window.ui")
 class DefuseWindow(Adw.ApplicationWindow):
-    __gtype_name__ = 'DefuseWindow'
+    __gtype_name__ = "DefuseWindow"
 
     label = Gtk.Template.Child()
 

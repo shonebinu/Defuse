@@ -12,6 +12,21 @@
   ],
   "modules": [
     {
+      "name": "rembg_models",
+      "buildsystem": "simple",
+      "build-commands": [
+        "mkdir -p ${FLATPAK_DEST}/share/io.github.shonebinu.Defuse/rembg_models",
+        "mv isnet-general-use.onnx ${FLATPAK_DEST}/share/io.github.shonebinu.Defuse/rembg_models"
+      ],
+      "sources": [
+        {
+          "type": "file",
+          "url": "https://github.com/danielgatis/rembg/releases/download/v0.0.0/isnet-general-use.onnx",
+          "sha256": "60920e99c45464f2ba57bee2ad08c919a52bbf852739e96947fbb4358c0d964a"
+        }
+      ]
+    },
+    {
       "name": "python3-rembg",
       "buildsystem": "simple",
       "build-commands": [
