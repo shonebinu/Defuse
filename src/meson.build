@@ -2,11 +2,29 @@ pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
 moduledir = pkgdatadir / 'defuse'
 gnome = import('gnome')
 
-gnome.compile_resources('defuse',
-  'defuse.gresource.xml',
-  gresource_bundle: true,
-  install: true,
-  install_dir: pkgdatadir,
+blueprints = custom_target(
+    'blueprints',
+    input: files(
+        'shortcuts-dialog.blp',
+        'window.blp',
+    ),
+    output: '.',
+    command: [
+        find_program('blueprint-compiler'),
+        'batch-compile',
+        '@OUTPUT@',
+        '@CURRENT_SOURCE_DIR@',
+        '@INPUT@',
+    ],
+)
+
+gnome.compile_resources(
+    'defuse',
+    'defuse.gresource.xml',
+    gresource_bundle: true,
+    install: true,
+    install_dir: pkgdatadir,
+    dependencies: blueprints,
 )
 
 python = import('python')
@@ -18,18 +36,18 @@ conf.set('localedir', get_option('prefix') / get_option('localedir'))
 conf.set('pkgdatadir', pkgdatadir)
 
 configure_file(
-  input: 'defuse.in',
-  output: 'defuse',
-  configuration: conf,
-  install: true,
-  install_dir: get_option('bindir'),
-  install_mode: 'rwxr-xr-x'
+    input: 'defuse.in',
+    output: 'defuse',
+    configuration: conf,
+    install: true,
+    install_dir: get_option('bindir'),
+    install_mode: 'rwxr-xr-x',
 )
 
 defuse_sources = [
-  '__init__.py',
-  'main.py',
-  'window.py',
+    '__init__.py',
+    'main.py',
+    'window.py',
 ]
 
 install_data(defuse_sources, install_dir: moduledir)

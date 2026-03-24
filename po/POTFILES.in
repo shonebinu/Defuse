@@ -5,4 +5,4 @@ data/io.github.shonebinu.Defuse.metainfo.xml.in
 data/io.github.shonebinu.Defuse.gschema.xml
 src/main.py
 src/window.py
-src/window.ui
+src/window.blp
