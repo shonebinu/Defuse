@@ -1,5 +1,6 @@
 import threading
 
+import onnxruntime
 from gi.repository import Adw, Gtk
 
 
@@ -11,6 +12,8 @@ class DefuseWindow(Adw.ApplicationWindow):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        print(onnxruntime.get_available_providers())
 
         self.rembg_session = None
 
