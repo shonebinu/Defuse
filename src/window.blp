@@ -18,12 +18,22 @@ template $DefuseWindow: Adw.ApplicationWindow {
       }
     }
 
-    content: Label label {
-      label: _("Hello, World!");
+    content: Adw.StatusPage {
+      title: _("Defuse");
+      icon-name: "io.github.shonebinu.Defuse";
+      description: _("Drag and drop image here");
 
-      styles [
-        "title-1",
-      ]
+      Button open_image_button {
+        label: _("Open Image...");
+        sensitive: false;
+        halign: center;
+        clicked => $on_open_image();
+
+        styles [
+          "pill",
+          "suggested-action",
+        ]
+      }
     };
   };
 }
@@ -45,4 +55,10 @@ menu primary_menu {
       action: "app.about";
     }
   }
+}
+
+FileFilter image_file_filter {
+  mime-types [
+    "image/*",
+  ]
 }
