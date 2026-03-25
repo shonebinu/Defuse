@@ -24,6 +24,9 @@ os.environ["NUMBA_CACHE_DIR"] = str(numba_cache_dir)
 # path where the models stored in flatpak build time
 os.environ["U2NET_HOME"] = "/app/share/io.github.shonebinu.Defuse/rembg_models"
 
+# disable auto re-downloading existing models
+os.environ["MODEL_CHECKSUM_DISABLED"] = "1"
+
 
 class DefuseApplication(Adw.Application):
     """The main application singleton class."""
