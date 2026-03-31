@@ -11,8 +11,6 @@ from PIL import Image, ImageOps
 class DefuseWindow(Adw.ApplicationWindow):
     __gtype_name__ = "DefuseWindow"
 
-    image_file_filter: Gtk.FileFilter = Gtk.Template.Child()
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -28,11 +26,14 @@ class DefuseWindow(Adw.ApplicationWindow):
         exts = Image.registered_extensions()
         supported_extensions = {ex for ex, f in exts.items() if f in Image.OPEN}
 
-        print(supported_extensions)
+        self.files_filter = Gtk.FileFilter(
+            name="Image Files",
+            mime_types=[f"image/{mime[1:]}" for mime in supported_extensions],
+        )
 
     @Gtk.Template.Callback()
     def on_open_image(self, _):
-        file_dialog = Gtk.FileDialog(default_filter=self.image_file_filter)
+        file_dialog = Gtk.FileDialog(default_filter=self.files_filter)
         file_dialog.open(self, None, self.on_image_opened)
 
     def on_image_opened(self, file_dialog: Gtk.FileDialog, result: Gio.AsyncResult):
@@ -40,26 +41,27 @@ class DefuseWindow(Adw.ApplicationWindow):
         file.load_contents_async(None, self.on_image_open_complete)
 
     def on_image_open_complete(self, file: Gio.File, result: Gio.AsyncResult):
-        success, data, _ = file.load_contents_finish(result)
+        success, img_bytes, _ = file.load_contents_finish(result)
 
         if not success:
             raise Exception("Image could not be read.")
 
-        image_bg_free_bytes = self.remove_bg_isnet(data)
+        threading.Thread(
+            target=self.remove_bg_and_save, args=(img_bytes,), daemon=True
+        ).start()
 
-        file_dialog = Gtk.FileDialog(
-            title="Save image",
-            initial_name="untitled.png",
-        )
+    def remove_bg_and_save(self, img_bytes: bytes):
+        try:
+            bg_free_img_bytes = self.remove_bg_isnet(img_bytes)
 
-        file_dialog.save(self, None, self.on_save_image, image_bg_free_bytes)
+            GLib.idle_add(self.prompt_save_dialog, bg_free_img_bytes)
+        except Exception as e:
+            print(f"Exception: {e}")
 
-    def remove_bg_isnet(self, image_bytes: bytes, output_format="PNG") -> bytes:
+    def remove_bg_isnet(self, img_bytes: bytes, output_format="PNG") -> bytes:
         # https://github.com/danielgatis/rembg/blob/main/rembg/sessions/dis_general_use.py
 
-        img = ImageOps.exif_transpose(
-            Image.open(io.BytesIO(image_bytes)).convert("RGB")
-        )
+        img = ImageOps.exif_transpose(Image.open(io.BytesIO(img_bytes)).convert("RGB"))
 
         mean, std, size = 0.5, 1.0, (1024, 1024)
 
@@ -81,13 +83,21 @@ class DefuseWindow(Adw.ApplicationWindow):
         )
         return bio.getvalue()
 
+    def prompt_save_dialog(self, bg_free_img_bytes: bytes):
+        file_dialog = Gtk.FileDialog(
+            title="Transparent Images",
+            initial_name="background_removed.png",
+        )
+
+        file_dialog.save(self, None, self.on_save_image, bg_free_img_bytes)
+
     def on_save_image(
-        self, dialog: Gtk.FileDialog, result: Gio.AsyncResult, image_bytes: bytes
+        self, dialog: Gtk.FileDialog, result: Gio.AsyncResult, img_bytes: bytes
     ):
         file = dialog.save_finish(result)
 
         file.replace_contents_bytes_async(
-            contents=GLib.Bytes.new(image_bytes),
+            contents=GLib.Bytes.new(img_bytes),
             etag=None,
             make_backup=False,
             flags=Gio.FileCreateFlags.NONE,
@@ -96,6 +106,9 @@ class DefuseWindow(Adw.ApplicationWindow):
 
     def on_image_save_complete(self, file: Gio.File, result: Gio.AsyncResult):
         success, _ = file.replace_contents_finish(result)
+
+        if not success:
+            raise Exception("Failed to save image.")
 
         info = file.query_info("standard::display-name", Gio.FileQueryInfoFlags.NONE)
 
