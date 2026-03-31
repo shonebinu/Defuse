@@ -1,31 +1,12 @@
-import os
 import sys
-from pathlib import Path
 
 import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-
-from gi.repository import Adw, Gio, GLib
+from gi.repository import Adw, Gio
 
 from .window import DefuseWindow
-
-numba_cache_dir = (
-    Path(GLib.get_user_cache_dir()) / "io.github.shonebinu.Defuse" / "numba-cache"
-)
-numba_cache_dir.mkdir(parents=True, exist_ok=True)
-
-# rembg uses numba, which does a compilation for its first run.
-# in flatpak environment, we need to set its cache path so that it does not try to compile every time
-# https://numba.readthedocs.io/en/stable/developer/caching.html
-os.environ["NUMBA_CACHE_DIR"] = str(numba_cache_dir)
-
-# path where the models stored in flatpak build time
-os.environ["U2NET_HOME"] = "/app/share/io.github.shonebinu.Defuse/rembg_models"
-
-# disable auto re-downloading existing models
-os.environ["MODEL_CHECKSUM_DISABLED"] = "1"
 
 
 class DefuseApplication(Adw.Application):
