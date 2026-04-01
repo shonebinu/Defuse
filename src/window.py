@@ -14,14 +14,10 @@ class DefuseWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        isnet_model_path = (
+        self.isnet_model_path = (
             "/app/share/io.github.shonebinu.Defuse/models/isnet-general-use.onnx"
         )
-
-        # webgpu provider on x86 and cpu on aarch64
-        self.onnx_session = ort.InferenceSession(
-            isnet_model_path, providers=ort.get_available_providers()
-        )
+        self.onnx_session = None
 
         exts = Image.registered_extensions()
         supported_extensions = {ex for ex, f in exts.items() if f in Image.OPEN}
@@ -60,6 +56,12 @@ class DefuseWindow(Adw.ApplicationWindow):
 
     def remove_bg_isnet(self, img_bytes: bytes, output_format="PNG") -> bytes:
         # https://github.com/danielgatis/rembg/blob/main/rembg/sessions/dis_general_use.py
+
+        if not self.onnx_session:
+            # webgpu provider on x86 and cpu on aarch64
+            self.onnx_session = ort.InferenceSession(
+                self.isnet_model_path, providers=ort.get_available_providers()
+            )
 
         img = ImageOps.exif_transpose(Image.open(io.BytesIO(img_bytes)).convert("RGB"))
 
