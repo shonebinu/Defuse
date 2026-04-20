@@ -3,55 +3,47 @@ using Adw 1;
 
 template $DefuseWindow: Adw.ApplicationWindow {
   title: _("Defuse");
-  default-width: 800;
+  default-width: 500;
   default-height: 600;
 
-  content: Adw.ToolbarView {
-    [top]
-    Adw.HeaderBar {
-      [end]
-      MenuButton {
-        primary: true;
-        icon-name: "open-menu-symbolic";
-        tooltip-text: _("Main Menu");
-        menu-model: primary_menu;
-      }
-    }
-
-    content: Adw.StatusPage {
+  content: Adw.NavigationView navigation_view {
+    Adw.NavigationPage {
       title: _("Defuse");
-      icon-name: "io.github.shonebinu.Defuse";
-      description: _("Drag and drop image here");
+      tag: "start_page";
 
-      Button open_image_button {
-        label: _("Open Image...");
-        halign: center;
-        clicked => $on_open_image();
+      child: Adw.ToolbarView {
+        [top]
+        $DefuseHeaderBar {}
 
-        styles [
-          "pill",
-          "suggested-action",
-        ]
-      }
-    };
+        content: Adw.StatusPage {
+          title: _("Defuse");
+          icon-name: "io.github.shonebinu.Defuse";
+          description: _("Drag and drop an image here");
+
+          Button open_image_button {
+            label: _("Open Image...");
+            halign: center;
+            clicked => $on_open_image();
+
+            styles [
+              "pill",
+              "suggested-action",
+            ]
+          }
+        };
+      };
+    }
+
+    Adw.NavigationPage {
+      title: _("Defuse");
+      tag: "convert_page";
+
+      child: Adw.ToolbarView {
+        [top]
+        $DefuseHeaderBar {}
+
+        content: Picture picture {};
+      };
+    }
   };
-}
-
-menu primary_menu {
-  section {
-    item {
-      label: _("_Preferences");
-      action: "app.preferences";
-    }
-
-    item {
-      label: _("_Keyboard Shortcuts");
-      action: "app.shortcuts";
-    }
-
-    item {
-      label: _("_About Defuse");
-      action: "app.about";
-    }
-  }
 }

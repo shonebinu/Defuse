@@ -6,10 +6,15 @@ import onnxruntime as ort
 from gi.repository import Adw, Gio, GLib, Gtk
 from PIL import Image, ImageOps
 
+from .header_bar import DefuseHeaderBar
+
 
 @Gtk.Template(resource_path="/io/github/shonebinu/Defuse/window.ui")
 class DefuseWindow(Adw.ApplicationWindow):
     __gtype_name__ = "DefuseWindow"
+
+    navigation_view: Adw.NavigationView = Gtk.Template.Child()
+    picture: Gtk.Picture = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -42,9 +47,12 @@ class DefuseWindow(Adw.ApplicationWindow):
         if not success:
             raise Exception("Image could not be read.")
 
-        threading.Thread(
-            target=self.remove_bg_and_save, args=(img_bytes,), daemon=True
-        ).start()
+        self.navigation_view.push_by_tag("convert_page")
+        self.picture.set_file(file)
+
+        # threading.Thread(
+        #     target=self.remove_bg_and_save, args=(img_bytes,), daemon=True
+        # ).start()
 
     def remove_bg_and_save(self, img_bytes: bytes):
         try:

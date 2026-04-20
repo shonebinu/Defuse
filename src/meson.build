@@ -5,6 +5,7 @@ gnome = import('gnome')
 blueprints = custom_target(
     'blueprints',
     input: files(
+        'header-bar.blp',
         'shortcuts-dialog.blp',
         'window.blp',
     ),
@@ -48,6 +49,7 @@ defuse_sources = [
     '__init__.py',
     'main.py',
     'window.py',
+    'header_bar.py',
 ]
 
 install_data(defuse_sources, install_dir: moduledir)
