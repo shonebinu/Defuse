@@ -50,6 +50,7 @@ defuse_sources = [
     'main.py',
     'window.py',
     'header_bar.py',
+    'processor.py',
 ]
 
 install_data(defuse_sources, install_dir: moduledir)

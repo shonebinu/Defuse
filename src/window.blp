@@ -18,10 +18,10 @@ template $DefuseWindow: Adw.ApplicationWindow {
         content: Adw.StatusPage {
           title: _("Defuse");
           icon-name: "io.github.shonebinu.Defuse";
-          description: _("Drag and drop an image here");
+          description: _("Open image to remove its background");
 
           Button open_image_button {
-            label: _("Open Image...");
+            label: _("Open Image");
             halign: center;
             clicked => $on_open_image();
 
@@ -36,13 +36,34 @@ template $DefuseWindow: Adw.ApplicationWindow {
 
     Adw.NavigationPage {
       title: _("Defuse");
-      tag: "convert_page";
+      tag: "process_page";
 
       child: Adw.ToolbarView {
         [top]
         $DefuseHeaderBar {}
 
-        content: Picture picture {};
+        content: Box {
+          orientation: vertical;
+          spacing: 24;
+          margin-top: 12;
+          margin-end: 12;
+          margin-start: 12;
+          margin-bottom: 24;
+
+          Picture picture_widget {
+            vexpand: true;
+          }
+
+          Button {
+            label: _("Remove Background");
+            halign: center;
+
+            styles [
+              "pill",
+              "suggested-action",
+            ]
+          }
+        };
       };
     }
   };
