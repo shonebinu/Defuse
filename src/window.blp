@@ -6,65 +6,105 @@ template $DefuseWindow: Adw.ApplicationWindow {
   default-width: 500;
   default-height: 600;
 
-  content: Adw.NavigationView navigation_view {
-    Adw.NavigationPage {
-      title: _("Defuse");
-      tag: "start_page";
+  content: Adw.ToastOverlay toast_overlay {
+    Adw.NavigationView navigation_view {
+      Adw.NavigationPage {
+        title: _("Defuse");
+        tag: "start_page";
 
-      child: Adw.ToolbarView {
-        [top]
-        $DefuseHeaderBar {}
+        child: Adw.ToolbarView {
+          [top]
+          $DefuseHeaderBar {}
 
-        content: Adw.StatusPage {
-          title: _("Defuse");
-          icon-name: "io.github.shonebinu.Defuse";
-          description: _("Open image to remove its background");
+          content: Adw.StatusPage {
+            title: _("Defuse");
+            icon-name: "io.github.shonebinu.Defuse";
+            description: _("Open image to remove its background");
 
-          Button open_image_button {
-            label: _("Open Image");
-            halign: center;
-            clicked => $on_open_image();
+            Button open_image_button {
+              label: _("Open Image");
+              halign: center;
+              clicked => $on_open_image();
 
-            styles [
-              "pill",
-              "suggested-action",
-            ]
-          }
+              styles [
+                "pill",
+                "suggested-action",
+              ]
+            }
+          };
         };
-      };
-    }
+      }
 
-    Adw.NavigationPage {
-      title: _("Defuse");
-      tag: "process_page";
+      Adw.NavigationPage {
+        title: _("Defuse");
+        tag: "process_page";
 
-      child: Adw.ToolbarView {
-        [top]
-        $DefuseHeaderBar {}
+        child: Adw.ToolbarView {
+          [top]
+          $DefuseHeaderBar {}
 
-        content: Box {
-          orientation: vertical;
-          spacing: 24;
-          margin-top: 12;
-          margin-end: 12;
-          margin-start: 12;
-          margin-bottom: 24;
+          content: Box {
+            orientation: vertical;
+            spacing: 24;
+            margin-top: 12;
+            margin-end: 12;
+            margin-start: 12;
+            margin-bottom: 24;
 
-          Picture picture_widget {
-            vexpand: true;
-          }
+            Picture picture_widget {
+              vexpand: true;
+            }
 
-          Button {
-            label: _("Remove Background");
-            halign: center;
+            Stack buttons_stack {
+              StackPage {
+                name: "remove_button";
 
-            styles [
-              "pill",
-              "suggested-action",
-            ]
-          }
+                child: Button remove_bg_button {
+                  halign: center;
+                  clicked => $on_remove_bg();
+
+                  styles [
+                    "pill",
+                    "suggested-action",
+                  ]
+
+                  Box {
+                    spacing: 6;
+
+                    Adw.Spinner remove_bg_spinner {
+                      visible: false;
+                    }
+
+                    Label {
+                      label: _("Remove Background");
+                    }
+                  }
+                };
+              }
+
+              StackPage {
+                name: "save_button";
+
+                child: Button save_bg_free_image_button {
+                  halign: center;
+                  clicked => $on_save_bg_free_image();
+
+                  styles [
+                    "pill",
+                    "suggested-action",
+                  ]
+
+                  Adw.ButtonContent {
+                    icon-name: "document-save-symbolic";
+                    label: _("Save Image");
+                    use-underline: true;
+                  }
+                };
+              }
+            }
+          };
         };
-      };
+      }
     }
   };
 }
