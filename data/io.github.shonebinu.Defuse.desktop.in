@@ -1,10 +1,10 @@
 [Desktop Entry]
-Name=defuse
+Name=Defuse
 Exec=defuse
 Icon=io.github.shonebinu.Defuse
 Terminal=false
 Type=Application
-Categories=Utility;
-Keywords=GTK;
+Categories=Utility;Graphics;ImageProcessing;
+Keywords=Background;Remover;Eraser;Bg;Cutout;Transparent;
 StartupNotify=true
 DBusActivatable=true
