@@ -4,7 +4,7 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gio
+from gi.repository import Adw, Gio, Gtk
 
 from .window import DefuseWindow
 
@@ -34,16 +34,30 @@ class DefuseApplication(Adw.Application):
 
     def on_about_action(self, *args):
         """Callback for the app.about action."""
-        about = Adw.AboutDialog(
-            application_name="defuse",
-            application_icon="io.github.shonebinu.Defuse",
-            developer_name="Shone Binu",
-            version="0.1.0",
-            developers=["Shone Binu"],
-            copyright="© 2026 Shone Binu",
+        about = Adw.AboutDialog.new_from_appdata(
+            "/io/github/shonebinu/Defuse/appdata.xml"
         )
-        # Translators: Replace "translator-credits" with your name/username, and optionally an email or URL.
-        about.set_translator_credits(_("translator-credits"))
+        about.add_link("Donate with Ko-Fi", "https://ko-fi.com/shonebinu")
+        about.add_link("Sponsor on Github", "https://github.com/sponsors/shonebinu")
+
+        about.add_other_app(
+            "io.github.shonebinu.Brief", "Brief", "Browse command-line cheatsheets"
+        )
+        about.add_other_app(
+            "io.github.shonebinu.Glyph", "Lipi", "Discover and install online fonts"
+        )
+        about.add_other_app(
+            "io.github.shonebinu.Exchange",
+            "Exchange",
+            "Convert between XML and Blueprint",
+        )
+
+        about.add_legal_section(
+            "Model Source",
+            "Background removal is powered by the <a href='https://github.com/xuebinqin/DIS'>ISNet-general</a> model.",
+            Gtk.License.APACHE_2_0,
+        )
+
         about.present(self.props.active_window)
 
     def create_action(self, name, callback, shortcuts=None):

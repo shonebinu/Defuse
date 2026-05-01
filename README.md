@@ -36,3 +36,5 @@ You can clone this project and run it using [Gnome Builder](https://apps.gnome.o
 ## Credits
 
 Background removal implementation is inspired by [rembg](https://github.com/danielgatis/rembg).
+
+Background removal model is [ISNet-general](https://github.com/xuebinqin/DIS).

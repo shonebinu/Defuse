@@ -1,8 +1,34 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <gresources>
   <gresource prefix="/io/github/shonebinu/Defuse">
     <file preprocess="xml-stripblanks">window.ui</file>
     <file preprocess="xml-stripblanks">header-bar.ui</file>
     <file preprocess="xml-stripblanks">shortcuts-dialog.ui</file>
+
+    <file
+      preprocess="xml-stripblanks"
+      alias="appdata.xml"
+    >../data/io.github.shonebinu.Defuse.metainfo.xml</file>
+  </gresource>
+
+  <gresource prefix="/io/github/shonebinu/Exchange/icons/scalable/actions">
+    <file
+      preprocess="xml-stripblanks"
+    >../data/icons/scalable/actions/open-menu-symbolic.svg</file>
+    <file
+      preprocess="xml-stripblanks"
+    >../data/icons/scalable/actions/document-save-symbolic.svg</file>
+  </gresource>
+
+  <gresource prefix="/io/github/shonebinu/Defuse/icons/scalable/apps">
+    <file
+      alias="io.github.shonebinu.Brief.svg"
+    >../data/icons/scalable/apps/io.github.shonebinu.Brief.svg</file>
+    <file
+      alias="io.github.shonebinu.Glyph.svg"
+    >../data/icons/scalable/apps/io.github.shonebinu.Glyph.svg</file>
+    <file
+      alias="io.github.shonebinu.Exchange.svg"
+    >../data/icons/scalable/apps/io.github.shonebinu.Exchange.svg</file>
   </gresource>
 </gresources>
