@@ -88,6 +88,14 @@
   </screenshots>
 
   <releases>
+    <release version="0.1.1" date="2026-05-04">
+      <description translate="no">
+        <p>Release v0.1.1</p>
+        <ul>
+          <li>Add fallback to cpu if webgpu fails</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.0" date="2026-05-02">
       <!-- <url type="details">https://example.org/changelog.html#version_1.0.1</url> -->
       <description translate="no">
