@@ -79,8 +79,8 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/d5/b3/9e45ba86ed39ab688578f21dd39ed4b575726205596891870a1a8b4d5ca9/onnxruntime-1.25.0-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
-          "sha256": "cddb565dfd630550a8817b3d5493ffcfa0fec273b545b2816f2fce53384e1151"
+          "url": "https://files.pythonhosted.org/packages/dc/9a/33225481a94a59906fce44e27ab12fc3bddd2aaecdc6160bd73341ca1aba/onnxruntime-1.25.1-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "311d29b943e46a55ca72ca1ea48d7815c993122bfc359f68215fddeb9583fff4"
         }
       ]
     },
@@ -109,8 +109,8 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/0d/01/97d350aab57585a8f34f1f8501c2b8de22a9e9f9367aecf6a51d8c9555f0/onnxruntime_webgpu-1.25.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
-          "sha256": "368fdaf87e946b13ac7edddcbf400e9cb25ff371fe7a0bf2cfd4858316a584f8"
+          "url": "https://files.pythonhosted.org/packages/86/1d/091d8c26f3041fe6a46d7306db49827d9a03cdac2c369c4a217a516dab3c/onnxruntime_webgpu-1.25.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "cd0842b9b9b7a2d2d01b37f2b079f834aac43840cf873ac1ac5e04a8509ed3da"
         }
       ]
     },
