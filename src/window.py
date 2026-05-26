@@ -69,7 +69,6 @@ class DefuseWindow(Adw.ApplicationWindow):
         )
         self.set_processing_bg(False)
         self.buttons_stack.set_visible_child_name("save_button")
-        self.toast_overlay.add_toast(Adw.Toast(title="Background removed"))
 
     def handle_process_failure(self):
         self.set_processing_bg(False)
