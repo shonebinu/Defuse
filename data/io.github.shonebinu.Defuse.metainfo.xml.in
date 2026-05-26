@@ -72,22 +72,25 @@
   <screenshots>
     <screenshot type="default">
       <image>
-        https://raw.githubusercontent.com/shonebinu/Defuse/refs/heads/main/data/screenshots/initial.png</image>
-      <caption>Initial Screen</caption>
+        https://raw.githubusercontent.com/shonebinu/Defuse/refs/heads/main/data/screenshots/img-save.png</image>
+      <caption>Image after background removal</caption>
     </screenshot>
     <screenshot>
       <image>
         https://raw.githubusercontent.com/shonebinu/Defuse/refs/heads/main/data/screenshots/img-remove.png</image>
       <caption>Image to be processed</caption>
     </screenshot>
-    <screenshot>
-      <image>
-        https://raw.githubusercontent.com/shonebinu/Defuse/refs/heads/main/data/screenshots/img-save.png</image>
-      <caption>Image after background removal</caption>
-    </screenshot>
   </screenshots>
 
   <releases>
+    <release version="0.1.2" date="2026-05-26">
+      <description translate="no">
+        <p>Release v0.1.2</p>
+        <ul>
+          <li>Remove background removal toast</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.1" date="2026-05-04">
       <description translate="no">
         <p>Release v0.1.1</p>
