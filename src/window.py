@@ -1,6 +1,6 @@
 import threading
 
-from gi.repository import Adw, Gdk, Gio, GLib, Gtk
+from gi.repository import Adw, Gdk, GdkPixbuf, Gio, GLib, Gtk
 from pathlib import Path
 from .header_bar import DefuseHeaderBar
 from .processor import ImageProcessor
@@ -18,6 +18,7 @@ class DefuseWindow(Adw.ApplicationWindow):
     remove_bg_button: Gtk.Button = Gtk.Template.Child()
     remove_bg_spinner: Adw.Spinner = Gtk.Template.Child()
     save_bg_free_image_button: Gtk.Button = Gtk.Template.Child()
+    copy_to_clipboard_button: Gtk.Button = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -85,6 +86,27 @@ class DefuseWindow(Adw.ApplicationWindow):
     @Gtk.Template.Callback()
     def on_save_bg_free_image(self, _):
         self.prompt_save_dialog()
+
+    @Gtk.Template.Callback()
+    def on_copy_to_clipboard(self, _):
+        if not self.bg_free_image_bytes:
+            return
+        
+        try:
+            # Create a GInputStream from the bytes
+            stream = Gio.MemoryInputStream.new_from_bytes(
+                GLib.Bytes.new(self.bg_free_image_bytes)
+            )
+            # Load the PNG as a GdkPixbuf
+            pixbuf = GdkPixbuf.Pixbuf.new_from_stream(stream, None)
+            
+            # Get the default display's clipboard and set the pixbuf
+            clipboard = Gdk.Display.get_default().get_clipboard()
+            clipboard.set_content(Gdk.ContentProvider.new_for_value(pixbuf))
+            
+            self.toast_overlay.add_toast(Adw.Toast(title="Copied to clipboard"))
+        except Exception as e:
+            self.toast_overlay.add_toast(Adw.Toast(title=f"Failed to copy: {str(e)}"))
 
     def prompt_save_dialog(self):
         if not self.bg_free_image_bytes:

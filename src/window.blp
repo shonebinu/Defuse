@@ -85,19 +85,38 @@ template $DefuseWindow: Adw.ApplicationWindow {
               StackPage {
                 name: "save_button";
 
-                child: Button save_bg_free_image_button {
+                child: Box {
                   halign: center;
-                  clicked => $on_save_bg_free_image();
+                  spacing: 12;
 
-                  styles [
-                    "pill",
-                    "suggested-action",
-                  ]
+                  Button save_bg_free_image_button {
+                    clicked => $on_save_bg_free_image();
 
-                  Adw.ButtonContent {
-                    icon-name: "document-save-symbolic";
-                    label: _("Save Image");
-                    use-underline: true;
+                    styles [
+                      "pill",
+                      "suggested-action",
+                    ]
+
+                    Adw.ButtonContent {
+                      icon-name: "document-save-symbolic";
+                      label: _("Save Image");
+                      use-underline: true;
+                    }
+                  }
+
+                  Button copy_to_clipboard_button {
+                    clicked => $on_copy_to_clipboard();
+                    tooltip-text: _("Copy to Clipboard");
+
+                    styles [
+                      "pill",
+                    ]
+
+                    Adw.ButtonContent {
+                      icon-name: "edit-copy-symbolic";
+                      label: _("Copy");
+                      use-underline: true;
+                    }
                   }
                 };
               }
