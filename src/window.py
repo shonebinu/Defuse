@@ -36,10 +36,13 @@ class DefuseWindow(Adw.ApplicationWindow):
 
     def on_image_opened(self, file_dialog: Gtk.FileDialog, result: Gio.AsyncResult):
         file = file_dialog.open_finish(result)
-        self.image_file_name = Path(file.get_basename() or "").stem
-        file.load_contents_async(None, self.on_image_open_complete)
+        self.on_load_image(file)
 
-    def on_image_open_complete(self, file: Gio.File, result: Gio.AsyncResult):
+    def on_load_image(self, file: Gio.File):
+        self.image_file_name = Path(file.get_basename() or "").stem
+        file.load_contents_async(None, self.on_image_loaded)
+
+    def on_image_loaded(self, file: Gio.File, result: Gio.AsyncResult):
         success, img_bytes, _ = file.load_contents_finish(result)
 
         if not success:
@@ -106,22 +109,20 @@ class DefuseWindow(Adw.ApplicationWindow):
             etag=None,
             make_backup=False,
             flags=Gio.FileCreateFlags.NONE,
-            callback=self.on_image_save_complete,
+            callback=self.on_image_saved,
         )
 
-    def on_image_save_complete(self, file: Gio.File, result: Gio.AsyncResult):
+    def on_image_saved(self, file: Gio.File, result: Gio.AsyncResult):
         success, _ = file.replace_contents_finish(result)
 
         if not success:
             self.toast_overlay.add_toast(Adw.Toast(title="Failed to save image"))
             return
 
-        info = file.query_info("standard::display-name", Gio.FileQueryInfoFlags.NONE)
-
-        display_name = (
-            info.get_attribute_string("standard::display-name")
-            if info
-            else file.get_basename()
+        info = file.query_info(
+            Gio.FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, Gio.FileQueryInfoFlags.NONE
         )
+
+        display_name = info.get_display_name() if info else file.get_basename()
 
         self.toast_overlay.add_toast(Adw.Toast(title=f"Saved to {display_name}"))
