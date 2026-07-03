@@ -1,5 +1,5 @@
 import threading
-
+from typing import Literal
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 from pathlib import Path
 from .header_bar import DefuseHeaderBar
@@ -11,6 +11,7 @@ class DefuseWindow(Adw.ApplicationWindow):
     __gtype_name__ = "DefuseWindow"
 
     toast_overlay: Adw.ToastOverlay = Gtk.Template.Child()
+    drag_revealer: Gtk.Revealer = Gtk.Template.Child()
     navigation_view: Adw.NavigationView = Gtk.Template.Child()
     open_image_button: Gtk.Button = Gtk.Template.Child()
     picture_widget: Gtk.Picture = Gtk.Template.Child()
@@ -23,11 +24,70 @@ class DefuseWindow(Adw.ApplicationWindow):
         super().__init__(**kwargs)
 
         self.image_processor = ImageProcessor()
+        self.is_processing = False
 
+        self.supported_mimes = self.image_processor.get_supported_mimes()
         self.files_filter = Gtk.FileFilter(
             name="Image Files",
-            mime_types=self.image_processor.get_supported_mimes(),
+            mime_types=self.supported_mimes,
         )
+
+    @Gtk.Template.Callback()
+    def on_image_enter(self, *_) -> Literal[Gdk.DragAction.COPY]:
+        self.drag_revealer.set_reveal_child(True)
+        self.navigation_view.add_css_class("blurred")
+        return Gdk.DragAction.COPY
+
+    @Gtk.Template.Callback()
+    def on_image_leave(self, *_):
+        self.drag_revealer.set_reveal_child(False)
+        self.navigation_view.remove_css_class("blurred")
+
+    @Gtk.Template.Callback()
+    def on_image_drop(
+        self,
+        _,
+        contents: Gdk.FileList | Gdk.Texture,
+        *args,
+    ):
+        if self.is_processing:
+            self.toast_overlay.add_toast(
+                Adw.Toast(title="Please wait for the current process to finish")
+            )
+            return
+
+        if isinstance(contents, Gdk.FileList):
+            if not (files := contents.get_files()):
+                return
+
+            if len(files) > 1:
+                self.toast_overlay.add_toast(
+                    Adw.Toast(title="Only one file can be processed at once")
+                )
+                return
+
+            file = files[0]
+            info = file.query_info(
+                Gio.FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+                Gio.FileQueryInfoFlags.NONE,
+            )
+
+            mime_type = info.get_content_type()
+
+            if not mime_type or mime_type not in self.supported_mimes:
+                self.toast_overlay.add_toast(
+                    Adw.Toast(
+                        title=f"Unsupported file format{': ' + mime_type if mime_type else ''}"
+                    )
+                )
+                return
+
+            self.on_load_image(file)
+        elif isinstance(contents, Gdk.Texture):
+            if not (img_bytes := contents.save_to_png_bytes().get_data()):
+                return
+
+            self.prepare_for_processing(img_bytes, "dropped_image", paintable=contents)
 
     @Gtk.Template.Callback()
     def on_open_image(self, _):
@@ -39,24 +99,39 @@ class DefuseWindow(Adw.ApplicationWindow):
         self.on_load_image(file)
 
     def on_load_image(self, file: Gio.File):
-        self.image_file_name = Path(file.get_basename() or "").stem
         file.load_contents_async(None, self.on_image_loaded)
 
     def on_image_loaded(self, file: Gio.File, result: Gio.AsyncResult):
         success, img_bytes, _ = file.load_contents_finish(result)
 
         if not success:
-            msg = "Could not open image"
-            self.toast_overlay.add_toast(Adw.Toast(title=msg))
+            self.toast_overlay.add_toast(Adw.Toast(title="Could not open image"))
             return
 
-        self.navigation_view.push_by_tag("process_page")
-        self.buttons_stack.set_visible_child_name("remove_button")
+        display_name = Path(file.get_basename() or "image").stem
+        self.prepare_for_processing(img_bytes, display_name, file=file)
 
-        self.picture_widget.set_file(file)
+    def prepare_for_processing(
+        self,
+        img_bytes: bytes,
+        file_name: str,
+        file: Gio.File | None = None,
+        paintable: Gdk.Paintable | None = None,
+    ):
+        self.image_file_name = file_name
         self.image_bytes = img_bytes
 
+        if self.navigation_view.get_visible_page_tag() != "process_page":
+            self.navigation_view.push_by_tag("process_page")
+        self.buttons_stack.set_visible_child_name("remove_button")
+
+        if file:
+            self.picture_widget.set_file(file)
+        elif paintable:
+            self.picture_widget.set_paintable(paintable)
+
     def set_processing_bg(self, is_processing: bool):
+        self.is_processing = is_processing
         self.remove_bg_spinner.set_visible(is_processing)
         self.remove_bg_button.set_sensitive(not is_processing)
 
