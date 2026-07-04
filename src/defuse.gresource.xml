@@ -10,15 +10,15 @@
     <file preprocess="xml-stripblanks" alias="appdata.xml" compressed="true">../data/io.github.shonebinu.Defuse.metainfo.xml</file>
   </gresource>
 
-  <gresource prefix="/io/github/shonebinu/Exchange/icons/scalable/actions">
+  <gresource prefix="/io/github/shonebinu/Defuse/icons/scalable/actions">
     <file preprocess="xml-stripblanks" compressed="true">../data/icons/scalable/actions/open-menu-symbolic.svg</file>
     <file preprocess="xml-stripblanks" compressed="true">../data/icons/scalable/actions/document-save-symbolic.svg</file>
     <file preprocess="xml-stripblanks" compressed="true">../data/icons/scalable/actions/insert-image-symbolic.svg</file>
   </gresource>
 
   <gresource prefix="/io/github/shonebinu/Defuse/icons/scalable/apps">
-    <file alias="io.github.shonebinu.Brief.svg" compressed="true">../data/icons/scalable/apps/io.github.shonebinu.Brief.svg</file>
-    <file alias="io.github.shonebinu.Glyph.svg" compressed="true">../data/icons/scalable/apps/io.github.shonebinu.Glyph.svg</file>
-    <file alias="io.github.shonebinu.Exchange.svg" compressed="true">../data/icons/scalable/apps/io.github.shonebinu.Exchange.svg</file>
+    <file alias="io.github.shonebinu.Brief.svg" preprocess="xml-stripblanks" compressed="true">../data/icons/scalable/apps/io.github.shonebinu.Brief.svg</file>
+    <file alias="io.github.shonebinu.Glyph.svg" preprocess="xml-stripblanks" compressed="true">../data/icons/scalable/apps/io.github.shonebinu.Glyph.svg</file>
+    <file alias="io.github.shonebinu.Exchange.svg" preprocess="xml-stripblanks" compressed="true">../data/icons/scalable/apps/io.github.shonebinu.Exchange.svg</file>
   </gresource>
 </gresources>
