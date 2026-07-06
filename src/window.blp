@@ -67,64 +67,81 @@ template $DefuseWindow: Adw.ApplicationWindow {
             [top]
             $DefuseHeaderBar {}
 
-            content: Box {
-              orientation: vertical;
-              spacing: 24;
-              margin-top: 12;
-              margin-end: 12;
-              margin-start: 12;
-              margin-bottom: 24;
+            content: Adw.ViewStack process_stack {
+              Adw.ViewStackPage {
+                name: "loading_page";
 
-              Picture picture_widget {
-                vexpand: true;
+                child: Adw.Spinner {
+                  halign: center;
+                  valign: center;
+                  width-request: 36;
+                  height-request: 36;
+                };
               }
 
-              Stack buttons_stack {
-                StackPage {
-                  name: "remove_button";
+              Adw.ViewStackPage {
+                name: "image_page";
 
-                  child: Button remove_bg_button {
-                    halign: center;
-                    clicked => $on_remove_bg();
+                child: Box {
+                  orientation: vertical;
+                  spacing: 24;
+                  margin-top: 12;
+                  margin-end: 12;
+                  margin-start: 12;
+                  margin-bottom: 24;
 
-                    styles [
-                      "pill",
-                      "suggested-action",
-                    ]
+                  Picture picture_widget {
+                    vexpand: true;
+                  }
 
-                    Box {
-                      spacing: 6;
+                  Adw.ViewStack buttons_stack {
+                    Adw.ViewStackPage {
+                      name: "remove_button";
 
-                      Adw.Spinner remove_bg_spinner {
-                        visible: false;
-                      }
+                      child: Button remove_bg_button {
+                        halign: center;
+                        clicked => $on_remove_bg();
 
-                      Label {
-                        label: _("Remove Background");
-                      }
+                        styles [
+                          "pill",
+                          "suggested-action",
+                        ]
+
+                        Box {
+                          spacing: 6;
+
+                          Adw.Spinner remove_bg_spinner {
+                            visible: false;
+                          }
+
+                          Label {
+                            label: _("Remove Background");
+                          }
+                        }
+                      };
                     }
-                  };
-                }
 
-                StackPage {
-                  name: "save_button";
+                    Adw.ViewStackPage {
+                      name: "save_button";
 
-                  child: Button save_bg_free_image_button {
-                    halign: center;
-                    clicked => $on_save_bg_free_image();
+                      child: Button save_bg_free_image_button {
+                        halign: center;
+                        clicked => $on_save_bg_free_image();
 
-                    styles [
-                      "pill",
-                      "suggested-action",
-                    ]
+                        styles [
+                          "pill",
+                          "suggested-action",
+                        ]
 
-                    Adw.ButtonContent {
-                      icon-name: "document-save-symbolic";
-                      label: _("Save Image");
-                      use-underline: true;
+                        Adw.ButtonContent {
+                          icon-name: "document-save-symbolic";
+                          label: _("Save Image");
+                          use-underline: true;
+                        }
+                      };
                     }
-                  };
-                }
+                  }
+                };
               }
             };
           };
