@@ -49,8 +49,8 @@
       "sources": [
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/8c/21/c2bcdd5906101a30244eaffc1b6e6ce71a31bd0742a01eb89e660ebfac2d/pillow-12.2.0.tar.gz",
-          "sha256": "a830b1a40919539d07806aa58e1b114df53ddd43213d9c8b75847eee6c0182b5"
+          "url": "https://files.pythonhosted.org/packages/1c/3d/bb7fca845737cf9d7dbde16ed1843984665ff2e0a518f5db43e77ec540b9/pillow-12.3.0.tar.gz",
+          "sha256": "3b8182a766685eaa002637e28b4ec8d6b18819a0c71f579bf0dbaa5830297cce"
         }
       ]
     },
@@ -69,18 +69,18 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/7d/90/8d23e3b0dafd024bf31bdec225b3bb5c2dbfa6912f8a53b8659f21216cbf/numpy-2.4.4-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
-          "sha256": "45dbed2ab436a9e826e302fcdcbe9133f9b0006e5af7168afb8963a6520da103"
+          "url": "https://files.pythonhosted.org/packages/2e/20/1ee6614d64332a1bba6411f38e68cb79eec1b2459e20a623777c5c5492a2/numpy-2.5.1-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "1c6759f538fb912fc46de0a6b1758ccf7b57bc7c7ebebc23974fdac3de8db0cd"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/eb/9d/aa69df2724ff63efa6f72307b483ce0827f4347cc6d6df24b59e26659fef/protobuf-7.34.1-cp310-abi3-manylinux2014_aarch64.whl",
-          "sha256": "5185e0e948d07abe94bb76ec9b8416b604cfe5da6f871d67aad30cbf24c3110b"
+          "url": "https://files.pythonhosted.org/packages/37/4b/dfb89eb0e652a1ff073c39a59fb5e3a83cfe9b57a2c83fa6d78270101767/protobuf-7.35.1-cp310-abi3-manylinux2014_aarch64.whl",
+          "sha256": "11d6b0ec246892d85215b0a13ca6e0233cf5284b68f0ac02646427f4ff88a799"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/dc/9a/33225481a94a59906fce44e27ab12fc3bddd2aaecdc6160bd73341ca1aba/onnxruntime-1.25.1-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
-          "sha256": "311d29b943e46a55ca72ca1ea48d7815c993122bfc359f68215fddeb9583fff4"
+          "url": "https://files.pythonhosted.org/packages/ce/88/24fc51fcbb126da6d032372314e47b55c3faad58f2aa78c0e199ccd20b9c/onnxruntime-1.27.0-cp313-cp313-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+          "sha256": "48b3d87eb560ff6a772240506f3c78d6d27c63cafedd5c775672e1194f968cfd"
         }
       ]
     },
@@ -99,18 +99,18 @@
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/d1/73/a9d864e42a01896bb5974475438f16086be9ba1f0d19d0bb7a07427c4a8b/numpy-2.4.4-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
-          "sha256": "c901b15172510173f5cb310eae652908340f8dede90fff9e3bf6c0d8dfd92f83"
+          "url": "https://files.pythonhosted.org/packages/ed/a7/2bcd3fdbb87804755c35b729bf8709d62025c5f4cfd7d5b2415997097515/numpy-2.5.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "9726558e8db4a5bf7929a70ae50f63abda4daf0efe810e3bfbab95976f75fc1a"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/53/1b/3b431694a4dc6d37b9f653f0c64b0a0d9ec074ee810710c0c3da21d67ba7/protobuf-7.34.1-cp310-abi3-manylinux2014_x86_64.whl",
-          "sha256": "8ff40ce8cd688f7265326b38d5a1bed9bfdf5e6723d49961432f83e21d5713e4"
+          "url": "https://files.pythonhosted.org/packages/e4/be/5b3cfe508bfab6761414ff944e3366eb13be4fd71efcd69450f89ba39f43/protobuf-7.35.1-cp310-abi3-manylinux2014_x86_64.whl",
+          "sha256": "74758715c53d7158fb76caf4f0cfdacc5329a4b1bb994f865d6cf302d413a1c4"
         },
         {
           "type": "file",
-          "url": "https://files.pythonhosted.org/packages/86/1d/091d8c26f3041fe6a46d7306db49827d9a03cdac2c369c4a217a516dab3c/onnxruntime_webgpu-1.25.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
-          "sha256": "cd0842b9b9b7a2d2d01b37f2b079f834aac43840cf873ac1ac5e04a8509ed3da"
+          "url": "https://files.pythonhosted.org/packages/7a/4e/782b2457b863e1748866b82d918323e61c2d0108a01906a278e7a86a3a55/onnxruntime_webgpu-1.27.0-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+          "sha256": "3eb30b487d2b428d2e5c1ac538177ab6336cce9b204197135dc5a16753b0258e"
         }
       ]
     },
