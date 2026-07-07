@@ -31,11 +31,13 @@ Defuse is a local background removal tool written in Python using GTK4 and Libad
 
 ## Development
 
-You can clone this project and run it using [Gnome Builder](https://apps.gnome.org/Builder/). The Python libraries used in this project are defined inside [requirements.txt](./requirements.txt), which you may install if you want editor completions.
+You can clone this project and run it using [Gnome Builder](https://apps.gnome.org/Builder/) or [Foundry](https://gitlab.gnome.org/GNOME/foundry). The Python libraries used in this project are defined inside [requirements.txt](./requirements.txt), which you may install if you want editor completions.
 
 ## Credits
 
-Background removal implementation is inspired by [rembg](https://github.com/danielgatis/rembg).
+Background removal implementation adapted from [rembg](https://github.com/danielgatis/rembg).
+
+Certain feature implementations borrowed from [Upscaler](https://gitlab.gnome.org/World/Upscaler).
 
 Background removal model is [ISNet-general](https://github.com/xuebinqin/DIS).
 
