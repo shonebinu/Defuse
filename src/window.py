@@ -1,9 +1,11 @@
+import io
 import threading
-from typing import Literal
+from typing import Literal, Optional
 from gi.repository import Adw, Gdk, Gio, GLib, Gtk
 from pathlib import Path
 from .header_bar import DefuseHeaderBar
 from .processor import ImageProcessor
+from PIL import Image
 
 
 @Gtk.Template(resource_path="/io/github/shonebinu/Defuse/window.ui")
@@ -24,10 +26,12 @@ class DefuseWindow(Adw.ApplicationWindow):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.image_processor = ImageProcessor()
         self.is_busy = False
+        self.image: Optional[Image.Image] = None
+        self.image_file_name = "image"
+        self.bg_free_image: Optional[Image.Image] = None
 
-        self.supported_mimes = self.image_processor.get_supported_mimes()
+        self.supported_mimes = ImageProcessor.get_supported_mimes()
         self.files_filter = Gtk.FileFilter(
             name="Image Files",
             mime_types=self.supported_mimes,
@@ -69,7 +73,6 @@ class DefuseWindow(Adw.ApplicationWindow):
                 Gio.FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
                 Gio.FileQueryInfoFlags.NONE,
             )
-
             mime_type = info.get_content_type()
 
             if not mime_type or mime_type not in self.supported_mimes:
@@ -80,7 +83,8 @@ class DefuseWindow(Adw.ApplicationWindow):
                 )
                 return
 
-            self.on_load_image(file)
+            self.process_selected_file(file)
+
         elif isinstance(contents, Gdk.Texture):
             self.show_loading_page()
             self.is_busy = True
@@ -100,7 +104,6 @@ class DefuseWindow(Adw.ApplicationWindow):
     @Gtk.Template.Callback()
     def on_remove_bg(self, _):
         self.set_processing_bg(True)
-
         threading.Thread(target=self.remove_bg, daemon=True).start()
 
     @Gtk.Template.Callback()
@@ -109,48 +112,51 @@ class DefuseWindow(Adw.ApplicationWindow):
 
     def on_image_opened(self, file_dialog: Gtk.FileDialog, result: Gio.AsyncResult):
         file = file_dialog.open_finish(result)
-        self.on_load_image(file)
+        self.process_selected_file(file)
 
-    def on_load_image(self, file: Gio.File):
+    def process_selected_file(self, file: Gio.File):
         self.show_loading_page()
         self.is_busy = True
-        file.load_contents_async(None, self.on_image_loaded)
 
-    def on_image_loaded(self, file: Gio.File, result: Gio.AsyncResult):
-        success, img_bytes, _ = file.load_contents_finish(result)
+        file_path = file.get_path()
+        file_name = Path(file.get_basename() or "image").stem
 
-        if not success:
-            self.handle_load_failure("Could not open image")
+        if not file_path:
+            self.handle_load_failure()
             return
-
-        display_name = Path(file.get_basename() or "image").stem
 
         threading.Thread(
             target=self.prepare_image_data,
-            args=(img_bytes, display_name),
+            args=(file_path, file_name),
             daemon=True,
         ).start()
 
+    def prepare_image_data(self, file_path: str, file_name: str):
+        with Image.open(file_path) as img:
+            img.load()
+
+        texture = self.create_memory_texture(img)
+        GLib.idle_add(self.prepare_for_processing, img, file_name, texture)
+
     def process_dropped_texture(self, texture: Gdk.Texture):
-        if not (img_bytes := texture.save_to_png_bytes().get_data()):
+        if not (img_bytes := texture.save_to_tiff_bytes().get_data()):
             GLib.idle_add(self.handle_load_failure)
             return
 
-        GLib.idle_add(self.prepare_for_processing, img_bytes, "dropped_image", texture)
+        with io.BytesIO(img_bytes) as bytes:
+            with Image.open(bytes) as img:
+                img.load()
 
-    def prepare_image_data(self, img_bytes: bytes, display_name: str):
-        texture = Gdk.Texture.new_from_bytes(GLib.Bytes.new(img_bytes))
-
-        GLib.idle_add(self.prepare_for_processing, img_bytes, display_name, texture)
+        GLib.idle_add(self.prepare_for_processing, img, "image", texture)
 
     def prepare_for_processing(
         self,
-        img_bytes: bytes,
+        image: Image.Image,
         file_name: str,
         paintable: Gdk.Paintable,
     ):
+        self.image = image
         self.image_file_name = file_name
-        self.image_bytes = img_bytes
 
         if self.navigation_view.get_visible_page_tag() != "process_page":
             self.navigation_view.push_by_tag("process_page")
@@ -164,10 +170,11 @@ class DefuseWindow(Adw.ApplicationWindow):
 
     def remove_bg(self):
         try:
-            self.bg_free_image_bytes = self.image_processor.remove_bg(self.image_bytes)
-            texture = Gdk.Texture.new_from_bytes(
-                GLib.Bytes.new(self.bg_free_image_bytes)
-            )
+            if not self.image:
+                return
+
+            self.bg_free_image = ImageProcessor.remove_bg(self.image)
+            texture = self.create_memory_texture(self.bg_free_image)
 
             GLib.idle_add(self.update_ui_after_processing, texture)
         except Exception:
@@ -179,26 +186,41 @@ class DefuseWindow(Adw.ApplicationWindow):
         self.buttons_stack.set_visible_child_name("save_button")
 
     def prompt_save_dialog(self):
-        if not self.bg_free_image_bytes:
+        if not self.bg_free_image:
             return
 
+        image_format = "PNG"
         file_dialog = Gtk.FileDialog(
-            initial_name=f"{self.image_file_name}_nobg.png",
+            initial_name=f"{self.image_file_name}_nobg.{image_format.lower()}",
         )
-
-        file_dialog.save(self, None, self.on_save_image, self.bg_free_image_bytes)
+        file_dialog.save(self, None, self.on_save_image, image_format)
 
     def on_save_image(
-        self, dialog: Gtk.FileDialog, result: Gio.AsyncResult, img_bytes: bytes
+        self, dialog: Gtk.FileDialog, result: Gio.AsyncResult, format: str
     ):
         file = dialog.save_finish(result)
+        threading.Thread(
+            target=self.encode_and_save_image,
+            args=(
+                file,
+                format,
+            ),
+            daemon=True,
+        ).start()
 
-        file.replace_contents_bytes_async(
-            contents=GLib.Bytes.new(img_bytes),
-            etag=None,
-            make_backup=False,
-            flags=Gio.FileCreateFlags.NONE,
-            callback=self.on_image_saved,
+    def encode_and_save_image(self, file: Gio.File, format: str):
+        if not self.bg_free_image:
+            return
+
+        img_bytes = ImageProcessor.image_to_bytes(self.bg_free_image, format)
+        GLib.idle_add(
+            lambda: file.replace_contents_bytes_async(
+                contents=GLib.Bytes.new(img_bytes),
+                etag=None,
+                make_backup=False,
+                flags=Gio.FileCreateFlags.NONE,
+                callback=self.on_image_saved,
+            )
         )
 
     def on_image_saved(self, file: Gio.File, result: Gio.AsyncResult):
@@ -211,9 +233,7 @@ class DefuseWindow(Adw.ApplicationWindow):
         info = file.query_info(
             Gio.FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, Gio.FileQueryInfoFlags.NONE
         )
-
         display_name = info.get_display_name() if info else file.get_basename()
-
         self.toast_overlay.add_toast(Adw.Toast(title=f"Saved to {display_name}"))
 
     def set_processing_bg(self, is_processing: bool):
@@ -235,3 +255,19 @@ class DefuseWindow(Adw.ApplicationWindow):
     def handle_process_failure(self):
         self.set_processing_bg(False)
         self.toast_overlay.add_toast(Adw.Toast(title="Could not remove background"))
+
+    def create_memory_texture(self, img: Image.Image) -> Gdk.MemoryTexture:
+        # https://gitlab.gnome.org/World/Upscaler/-/blob/main/upscaler/media.py
+        # use pillow for texture creation
+        # since gtk image loaders only support limited formats
+        if img.mode != "RGBA":
+            img = img.convert("RGBA")
+
+        width, height = img.size
+        return Gdk.MemoryTexture.new(
+            width,
+            height,
+            Gdk.MemoryFormat.R8G8B8A8,
+            GLib.Bytes.new(img.tobytes()),
+            width * 4,
+        )
