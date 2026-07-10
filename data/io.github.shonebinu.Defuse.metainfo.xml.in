@@ -83,6 +83,16 @@
   </screenshots>
 
   <releases>
+    <release version="0.1.3" date="2026-07-11">
+      <description translate="no">
+        <p>Release v0.1.3</p>
+        <ul>
+          <li>Implement image drag and drop</li>
+          <li>Add image loading visuals</li>
+          <li>Fix images not displaying for some formats (webp, avif, etc.)</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.1.2" date="2026-05-26">
       <description translate="no">
         <p>Release v0.1.2</p>
